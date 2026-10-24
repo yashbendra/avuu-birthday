@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Happy Birthday 🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#ffd6e8;--bg2:#e0c3fc;--bg3:#c2e9fb;--card:rgba(255,255,255,.55);--text:#4a2c5a;--accent:#e0559c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#3b1e4a;--bg2:#251a4d;--bg3:#12304a;--card:rgba(255,255,255,.1);--text:#f6e8ff;--accent:#ff8cc6}}
+:root[data-theme="dark"]{--bg1:#3b1e4a;--bg2:#251a4d;--bg3:#12304a;--card:rgba(255,255,255,.1);--text:#f6e8ff;--accent:#ff8cc6}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{font-family:Poppins,system-ui,sans-serif;color:var(--text);background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));background-size:300% 300%;animation:bg 14s ease infinite;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center}
+@keyframes bg{50%{background-position:100% 100%}}
+canvas{position:fixed;inset:0;pointer-events:none;z-index:1}
+.stage{position:relative;z-index:2;width:min(90vw,440px);padding:20px}
+.scene{display:none;animation:in .9s ease both}
+.scene.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(24px) scale(.96)}}
+h1{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:clamp(2.2rem,9vw,3.4rem);line-height:1.15;color:var(--accent)}
+p{line-height:1.8;font-weight:300;font-size:1.05rem;margin-top:14px}
+.card{background:var(--card);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.5);border-radius:28px;padding:34px 26px;box-shadow:0 20px 50px rgba(160,80,160,.2)}
+button{margin-top:26px;font:inherit;font-size:1rem;color:#fff;background:linear-gradient(135deg,#ff7eb3,#a66cff);border:0;border-radius:40px;padding:13px 32px;cursor:pointer;box-shadow:0 8px 22px rgba(166,108,255,.4);transition:transform .2s}
+button:active{transform:scale(.95)}
+.big{font-size:4.5rem;display:block;animation:bob 2.2s ease-in-out infinite;cursor:pointer}
+@keyframes bob{50%{transform:translateY(-12px) rotate(4deg)}}
+.hint{font-size:.85rem;opacity:.7;margin-top:12px}
+.cake{font-size:5rem;display:block;position:relative}
+.flame{position:absolute;left:50%;top:-6px;transform:translateX(-50%);font-size:2rem;animation:fl .4s ease-in-out infinite alternate;cursor:pointer}
+@keyframes fl{to{transform:translateX(-50%) scale(1.15) rotate(5deg)}}
+.flame.out{display:none}
+.msg{font-size:1.1rem;min-height:5.5em}
+.dots{margin-top:18px;opacity:.6;font-size:.85rem}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="stage">
+
+  <div class="scene on" id="s0">
+    <span class="big" id="gift">🎁</span>
+    <h1 style="margin-top:20px">Something for <span class="nm">you</span></h1>
+    <p class="hint">tap the gift to open ✨</p>
+  </div>
+
+  <div class="scene" id="s1">
+    <div class="card">
+      <h1>Happy Birthday, <span class="nm">you</span>!!!! 🎉</h1>
+      <p class="msg" id="msg"></p>
+      <p class="dots" id="dots"></p>
+      <button id="next">Next 💌</button>
+    </div>
+  </div>
+
+  <div class="scene" id="s2">
+    <div class="card">
+      <span class="cake">🎂<span class="flame" id="flame">🔥</span></span>
+      <p style="margin-top:22px">Make a wish, then tap the flame to blow it out 🕯️</p>
+    </div>
+  </div>
+
+  <div class="scene" id="s3">
+    <div class="card">
+      <h1>Wish granted 🌸</h1>
+      <p>May this year bring you all the happiness, peace and little surprises you deserve. Never stop being the lovely person you are.</p>
+      <p style="color:var(--accent);font-weight:400">Happy Birthday once again, <span class="nm">you</span> 💖</p>
+      <p style="font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:1.5rem;color:var(--accent);margin-top:18px">enjoyasss ur day avniassss 🌸</p>
+      <button id="again">Celebrate again 🎈</button>
+    </div>
+  </div>
+
+</div>
+<script>
+(function(){
+  var name="Avvuuuu";
+  try{var h=decodeURIComponent((location.hash||"").slice(1)).replace(/[_-]+/g," ").trim();if(h)name=h;}catch(e){}
+  document.querySelectorAll(".nm").forEach(function(n){n.textContent=name;});
+  var msgs=[
+    "Today the world got a little brighter, because you were born. 🌷",
+    "Thank you for being such a genuine friend, with you everything feels easy and happy. 🤍",
+    "I know we haven’t talked much lately, but our bond is still as good as it was yesterday. Some friendships don’t need daily talks to stay strong. 🤍",
+    "I hope today is full of cake, laughter and everything that makes you smile. 🍰",
+    "Here’s to new adventures, big dreams and a beautiful year ahead. ✨"
+  ];
+  var i=0,cv=document.getElementById("c"),cx=cv.getContext("2d"),ps=[],W,H;
+  function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight;}rs();addEventListener("resize",rs);
+  var cols=["#ff7eb3","#ffd166","#a66cff","#6ad7ff","#ff9a8b","#9bf6c3"];
+  function burst(n){for(var k=0;k<n;k++)ps.push({x:Math.random()*W,y:-10,vx:(Math.random()-.5)*3,vy:Math.random()*3+2,r:Math.random()*6+3,c:cols[k%cols.length],a:Math.random()*6,s:Math.random()*.2});}
+  function emoji(n,list){for(var k=0;k<n;k++)ps.push({x:Math.random()*W,y:H+20,vx:(Math.random()-.5),vy:-(Math.random()*1.5+.8),e:list[k%list.length],sz:Math.random()*16+16,a:0,s:0});}
+  (function loop(){cx.clearRect(0,0,W,H);
+    ps=ps.filter(function(p){return p.y>-60&&p.y<H+40;});
+    ps.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.a+=p.s;
+      if(p.e){cx.font=p.sz+"px serif";cx.fillText(p.e,p.x,p.y);}
+      else{cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);cx.fillStyle=p.c;cx.fillRect(-p.r/2,-p.r,p.r,p.r*2);cx.restore();p.vy+=.01;}
+    });
+    requestAnimationFrame(loop);})();
+  setInterval(function(){emoji(1,["🎈","🌸","✨","💖","🦋"]);},900);
+  function show(n){document.querySelectorAll(".scene").forEach(function(s){s.classList.remove("on");});document.getElementById("s"+n).classList.add("on");}
+  function setMsg(){document.getElementById("msg").textContent=msgs[i];
+    var d="";for(var k=0;k<msgs.length;k++)d+=k===i?"● ":"○ ";document.getElementById("dots").textContent=d;
+    document.getElementById("next").textContent=i<msgs.length-1?"Next 💌":"Make a wish 🎂";}
+  document.getElementById("gift").onclick=function(){burst(120);setMsg();show(1);};
+  document.getElementById("next").onclick=function(){if(i<msgs.length-1){i++;setMsg();burst(30);}else{show(2);}};
+  document.getElementById("flame").onclick=function(){this.classList.add("out");burst(220);emoji(14,["🎈","💖","🌸"]);setTimeout(function(){show(3);},900);};
+  document.getElementById("again").onclick=function(){burst(200);emoji(16,["🎈","✨","💖"]);};
+})();
+</script>
+</body>
+</html>
